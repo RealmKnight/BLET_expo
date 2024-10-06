@@ -17,9 +17,11 @@ export default function Home() {
           <Feather name="search" size={20} color="black" />
         </View>
       </View>
-      <MemberListItem member={members[0]} />
-      <MemberListItem member={members[1]} />
-      <FlatList data={undefined} renderItem={undefined} />
+      <FlatList
+        data={members}
+        renderItem={({ item }) => <MemberListItem member={item} />}
+        className="bg-gray-200"
+      />
     </>
   );
 }

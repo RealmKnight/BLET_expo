@@ -22,12 +22,12 @@ export default function MemberListItem({ member }) {
             <Text className="pl-1 text-blue-500">{member.prior_sen_rank}</Text>
           </View>
           <View className="flex-row">
-            <Text className="mr-auto text-green-400">{member.engineer_date}</Text>
+            <Text className="mr-auto text-green-500">{member.engineer_date}</Text>
             <Text className="pl-1 text-gray-400">{member.company_hire_date}</Text>
           </View>
           <View className="flex-row place-items-center ">
-            <Text className="mr-auto text-lg text-amber-200">Zone {member.zone}</Text>
-            <Text className="pl-1 text-yellow-400">Div {member.division}</Text>
+            <Text className="mr-auto text-lg text-amber-700">Zone {member.zone}</Text>
+            <Text className="pl-1 text-yellow-600">Div {member.division}</Text>
           </View>
           <View className="flex-row">
             <Text className="mr-auto"> </Text>

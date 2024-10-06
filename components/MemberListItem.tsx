@@ -3,8 +3,8 @@ import { View, Text } from 'react-native';
 
 export default function MemberListItem({ member }) {
   return (
-    <View className="flex-1 place-items-center pb-10">
-      <View className="flex-row items-center  border-b-4 border-gray-400">
+    <View className="m-3 flex-1 place-items-center border-b-4 border-gray-400 pb-3">
+      <View className="flex-row items-center justify-items-start">
         <View className="pb-3 pr-4">
           <Text className="font-bold text-pink-500">Rank</Text>
         </View>

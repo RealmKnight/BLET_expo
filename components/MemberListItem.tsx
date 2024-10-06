@@ -1,6 +1,7 @@
 import Feather from '@expo/vector-icons/Feather';
 import { View, Text } from 'react-native';
 import dayjs from 'dayjs';
+import { Link } from 'expo-router';
 
 export default function MemberListItem({ member }) {
   return (
@@ -36,7 +37,9 @@ export default function MemberListItem({ member }) {
           </View>
           <View className="flex-row">
             <Text className="mr-auto"> </Text>
-            <Feather name="edit" size={20} color="black" />
+            <Link href={`/${member.id}`}>
+              <Feather name="edit" size={20} color="black" />
+            </Link>
             <Feather name="share" size={20} color="black" />
           </View>
         </View>

@@ -1,9 +1,10 @@
 import Feather from '@expo/vector-icons/Feather';
 import { View, Text } from 'react-native';
+import dayjs from 'dayjs';
 
 export default function MemberListItem({ member }) {
   return (
-    <View className="m-3 flex-1 place-items-center border-b-4 border-gray-400 pb-3">
+    <View className="m-3 flex-1 place-items-center border-b-4 border-gray-300 pb-3">
       <View className="flex-row items-center justify-items-start">
         <View className="pb-3 pr-4">
           <Text className="font-bold text-pink-500">Rank</Text>
@@ -22,8 +23,12 @@ export default function MemberListItem({ member }) {
             <Text className="pl-1 text-blue-500">{member.prior_sen_rank}</Text>
           </View>
           <View className="flex-row">
-            <Text className="mr-auto text-green-500">{member.engineer_date}</Text>
-            <Text className="pl-1 text-gray-400">{member.company_hire_date}</Text>
+            <Text className="mr-auto text-green-500">
+              {dayjs(member.engineer_date).format('MM/DD/YYYY')}
+            </Text>
+            <Text className="pl-1 text-gray-400">
+              {dayjs(member.company_hire_date).format('MM/DD/YYYY')}
+            </Text>
           </View>
           <View className="flex-row place-items-center ">
             <Text className="mr-auto text-lg text-amber-700">Zone {member.zone}</Text>

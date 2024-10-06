@@ -12,14 +12,28 @@ export default function TabLayout() {
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Tab One',
+          title: 'WC Roster',
           tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
         }}
       />
       <Tabs.Screen
-        name="two"
+        name="DMIR Roster"
         options={{
-          title: 'Tab Two',
+          title: 'DMIR Roster',
+          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="DWP Roster"
+        options={{
+          title: 'DWP Roster',
+          tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
+        }}
+      />
+      <Tabs.Screen
+        name="EJE Roster"
+        options={{
+          title: 'EJ&E Roster',
           tabBarIcon: ({ color }) => <TabBarIcon name="code" color={color} />,
         }}
       />

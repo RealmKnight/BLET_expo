@@ -1,4 +1,4 @@
-import { Ionicons, MaterialIcons } from '@expo/vector-icons';
+import { Ionicons, MaterialIcons, FontAwesome } from '@expo/vector-icons';
 import { Link } from 'expo-router';
 import { Drawer } from 'expo-router/drawer';
 
@@ -15,13 +15,11 @@ const DrawerLayout = () => (
       }}
     />
     <Drawer.Screen
-      name="(tabs)"
+      name="Rosters"
       options={{
-        headerTitle: 'Tabs',
-        drawerLabel: 'Tabs',
-        drawerIcon: ({ size, color }) => (
-          <MaterialIcons name="border-bottom" size={size} color={color} />
-        ),
+        headerTitle: 'Rosters',
+        drawerLabel: 'Rosters',
+        drawerIcon: ({ size, color }) => <FontAwesome name="list-alt" size={size} color={color} />,
         headerRight: () => (
           <Link href="/modal" asChild>
             <HeaderButton />

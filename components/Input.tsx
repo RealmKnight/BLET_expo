@@ -24,9 +24,9 @@ export default function Input({
     return <Text>Member not found</Text>;
   }
   return (
-    <View className="flex-row place-items-baseline p-2">
+    <View className="flex-row place-items-center p-2">
       <Text className="mr-auto">{label}</Text>
-      <View className="flex-row items-center rounded-xl border-2 border-gray-400 pl-2">
+      <View className="flex-row rounded-xl border-2 border-gray-400">
         <View>{leftIcon}</View>
         <TextInput
           placeholder={placeHolder ? placeHolder : label ? `Enter ${label}` : ''}
@@ -37,7 +37,7 @@ export default function Input({
           onEndEditing={validate}
           multiline={numLines > 1}
           numberOfLines={numLines}
-          className="m-2 border-0"
+          className="m-2"
         />
         <View>{rightIcon}</View>
       </View>

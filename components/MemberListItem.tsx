@@ -3,7 +3,19 @@ import { View, Text } from 'react-native';
 import dayjs from 'dayjs';
 import { Link } from 'expo-router';
 
-export default function MemberListItem({ member }) {
+export interface Member {
+  first_name: string;
+  last_name: string;
+  pin_number: number;
+  prior_sen_type: string;
+  prior_sen_rank: string;
+  engineer_date: string;
+  company_hire_date: string;
+  zone: string;
+  division: string;
+}
+
+export default function MemberListItem({ member }: { member: Member }) {
   return (
     <View className="m-3 flex-1 place-items-center border-b-4 border-gray-300 pb-3">
       <View className="flex-row items-center justify-items-start">
@@ -37,7 +49,7 @@ export default function MemberListItem({ member }) {
           </View>
           <View className="flex-row">
             <Text className="mr-auto"> </Text>
-            <Link href={`/${member.id}`}>
+            <Link href={`/${member.pin_number.toString()}`}>
               <Feather name="edit" size={20} color="black" />
             </Link>
             <Feather name="share" size={20} color="black" />

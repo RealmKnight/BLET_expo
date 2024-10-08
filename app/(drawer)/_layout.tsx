@@ -1,4 +1,4 @@
-import { Ionicons, MaterialIcons, FontAwesome } from '@expo/vector-icons';
+import { Ionicons, MaterialIcons, FontAwesome, Feather } from '@expo/vector-icons';
 import { Link } from 'expo-router';
 import { Drawer } from 'expo-router/drawer';
 
@@ -25,6 +25,14 @@ const DrawerLayout = () => (
             <HeaderButton />
           </Link>
         ),
+      }}
+    />
+    <Drawer.Screen
+      name="Full Member List"
+      options={{
+        headerTitle: 'Full Member List',
+        drawerLabel: 'Full Member List',
+        drawerIcon: ({ size, color }) => <Feather name="users" size={size} color={color} />,
       }}
     />
   </Drawer>

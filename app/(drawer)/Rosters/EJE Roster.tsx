@@ -1,10 +1,11 @@
 import Feather from '@expo/vector-icons/Feather';
-import { Stack } from 'expo-router';
+import { Redirect, Stack } from 'expo-router';
 import { View, Text } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import MemberListItem from '~/components/MemberListItem';
 
 import members from '~/assets/members.json';
+import { useAuth } from '~/contexts/AuthProvider';
 
 export default function Home() {
   return (

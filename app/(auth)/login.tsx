@@ -1,16 +1,7 @@
 import Feather from '@expo/vector-icons/Feather';
 import { Stack } from 'expo-router';
 import React, { useState } from 'react';
-import {
-  Alert,
-  StyleSheet,
-  View,
-  AppState,
-  TextInput,
-  Button,
-  Text,
-  Pressable,
-} from 'react-native';
+import { Alert, View, AppState, Text, Pressable } from 'react-native';
 import Input from '~/components/Input';
 import { supabase } from '~/utils/supabase';
 

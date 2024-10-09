@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput } from 'react-native';
 import MemberListItem from '~/components/MemberListItem';
 
 import members from '~/assets/members.json';
 import { useLocalSearchParams } from 'expo-router';
+import { supabase } from '~/utils/supabase';
 
 interface InputProps {
   label: string;
@@ -33,6 +34,17 @@ export default function Input({
   value,
 }: InputProps): React.JSX.Element {
   const { id } = useLocalSearchParams();
+
+  const [members, setMembers] = useState<any[]>([]);
+
+  useEffect(() => {
+    fetchMembers();
+  }, []);
+
+  const fetchMembers = async () => {
+    const { data, error } = await supabase.from('members').select('*').order('wc_sen_roster');
+    setMembers(data || []);
+  };
 
   const member = members.find((m) => m.pin_number.toString() === id);
 

@@ -76,31 +76,35 @@ export default function Home() {
       return data || [];
     };
 
-    const dwpMembers = await supabase
-      .from('members')
-      .select('*')
-      .eq('status', 'ACTIVE')
-      .eq('system_sen_type', 'DWP')
-      .order('prior_vac_sys');
-    setMembers(dwpMembers.data || []);
+    const combinedData = combineDWPArrays(
+      await wcmembers(),
+      await dmirmembers(),
+      await dwpmembers(),
+      await sys1members(),
+      await ejemembers(),
+      await sys2members()
+    );
+    setMembers(combinedData);
   };
 
   return (
     <>
       <Stack.Screen options={{ title: 'DWP Roster' }} />
       <View>
-        <View className="items-center">
-          <Text className="text-2xl font-semibold uppercase">DWP Roster</Text>
-          <Pressable className="m-2 flex-row">
-            <Text className="mr-2">Search</Text>
-            <Feather name="search" size={20} color="black" />
-          </Pressable>
-        </View>
-        <View className="ml-auto p-3 pr-5">
-          <Pressable className=" m-1 flex-row">
-            <Text>Recalculate Roster </Text>
-            <Feather name="check-circle" size={20} color="black" />
-          </Pressable>
+        <View>
+          <View className="items-center">
+            <Text className="text-2xl font-semibold uppercase">DWP Roster</Text>
+          </View>
+          <View className="flex-row justify-between">
+            <Pressable className="m-2 mr-auto flex-row pl-2">
+              <Text className="mr-2">Search</Text>
+              <Feather name="search" size={20} color="black" />
+            </Pressable>
+            <Pressable onPress={fetchDWPMembers} className=" m-2 flex-row pr-2">
+              <Text>Recalculate Roster </Text>
+              <Feather name="check-circle" size={20} color="black" />
+            </Pressable>
+          </View>
         </View>
       </View>
       <FlatList

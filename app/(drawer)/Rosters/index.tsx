@@ -91,18 +91,20 @@ export default function Home() {
     <>
       <Stack.Screen options={{ title: 'WC Roster' }} />
       <View>
-        <View className="items-center">
-          <Text className="text-2xl font-semibold uppercase">WC Roster</Text>
-          <Pressable className="m-2 flex-row">
-            <Text className="mr-2">Search</Text>
-            <Feather name="search" size={20} color="black" />
-          </Pressable>
-        </View>
-        <View className="ml-auto p-3 pr-5">
-          <Pressable onPress={fetchWCMembers} className=" m-1 flex-row">
-            <Text>Recalculate Roster </Text>
-            <Feather name="check-circle" size={20} color="black" />
-          </Pressable>
+        <View>
+          <View className="items-center">
+            <Text className="text-2xl font-semibold uppercase">WC Roster</Text>
+          </View>
+          <View className="flex-row justify-between">
+            <Pressable className="m-2 mr-auto flex-row pl-2">
+              <Text className="mr-2">Search</Text>
+              <Feather name="search" size={20} color="black" />
+            </Pressable>
+            <Pressable onPress={fetchWCMembers} className=" m-2 flex-row pr-2">
+              <Text>Recalculate Roster </Text>
+              <Feather name="check-circle" size={20} color="black" />
+            </Pressable>
+          </View>
         </View>
       </View>
       <FlatList

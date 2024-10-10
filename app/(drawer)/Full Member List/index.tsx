@@ -68,7 +68,8 @@ export default function Home() {
         <Text className="p-4">
           This is a list of all members including those who have retired or otherwise been listed as
           inactive for Union Purposes since January when the new Rosters came out. Ordered by Prior
-          Senoirity System and Prior System Rank.
+          Senoirity System and Prior System Rank, WC -&gt; DMIR -&gt; DWP -&gt; SYS1 -&gt; EJ&E
+          -&gt; SYS2 .
         </Text>
         <View className="m-2 flex-row">
           <Text className="mr-2">Search</Text>

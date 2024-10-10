@@ -54,6 +54,7 @@ export default function EditMember() {
           />
           <Input label="Zone : " placeHolder={member.zone} secure={false} />
           <Input label="Division : " placeHolder={member.division} secure={false} />
+          <Input label="Status : " placeHolder={member.status} secure={false} />
         </KeyboardAwareScrollView>
       </View>
       <View className="flex-row items-center border-t-2 border-gray-200 bg-gray-200 p-2 pr-3">

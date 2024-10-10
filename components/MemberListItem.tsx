@@ -52,9 +52,7 @@ export default function MemberListItem({
             </View>
             <View className="flex-row">
               <Text className="mr-auto text-blue-500">{member.system_sen_type}</Text>
-              <Text className="pl-1 text-blue-500">{member.prior_vac_sys}</Text>
-            </View>
-            <View className="flex-row">
+              <Text className="pl-1 pr-1 text-blue-500">{member.prior_vac_sys}</Text>
               <Text className="mr-auto text-green-500">
                 {dayjs(member.engineer_date).format('MM/DD/YYYY')}
               </Text>
@@ -66,6 +64,19 @@ export default function MemberListItem({
               <Text className="mr-auto text-lg text-amber-700">{member.zone} </Text>
               <Text className="pl-1 text-yellow-600">Div {member.division}</Text>
             </View>
+          </View>
+          {/* Seperate column */}
+          <View className=" flex-col p-2">
+            <Text>{dataNotes ? `` : `${member.misc_notes}`}</Text>
+            <Text>
+              {!fullRoster ? (
+                ' '
+              ) : (
+                <>
+                  <Text className={classNames.join(' ') + ' '}>{member.status}</Text>
+                </>
+              )}
+            </Text>
             <View className="flex-row">
               <Text className="mr-auto"> </Text>
               <Link href={`/${member.pin_number.toString()}`}>
@@ -73,19 +84,6 @@ export default function MemberListItem({
               </Link>
               <Feather name="share" size={20} color="black" />
             </View>
-          </View>
-          {/* Seperate column */}
-          <View className="ml-5 flex-col p-5">
-            <Text>{dataNotes ? `` : `Notes: ${member.misc_notes}`}</Text>
-            <Text>
-              {!fullRoster ? (
-                ' '
-              ) : (
-                <>
-                  Status: <Text className={classNames.join(' ') + ' '}>{member.status}</Text>
-                </>
-              )}
-            </Text>
           </View>
         </View>
       </View>

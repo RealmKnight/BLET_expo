@@ -1,6 +1,6 @@
 import Feather from '@expo/vector-icons/Feather';
 import { Redirect, Stack } from 'expo-router';
-import { View, Text } from 'react-native';
+import { View, Text, Pressable } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import MemberListItem from '~/components/MemberListItem';
 
@@ -61,19 +61,29 @@ export default function Home() {
   return (
     <>
       <Stack.Screen options={{ title: 'Full Member List' }} />
-      <View className="items-center">
-        <Text className="text-2xl font-semibold uppercase">
-          Full Member List Including In-Active Members
-        </Text>
-        <Text className="p-4">
-          This is a list of all members including those who have retired or otherwise been listed as
-          inactive for Union Purposes since January when the new Rosters came out. Ordered by Prior
-          Senoirity System and Prior System Rank, WC -&gt; DMIR -&gt; DWP -&gt; SYS1 -&gt; EJ&E
-          -&gt; SYS2 .
-        </Text>
-        <View className="m-2 flex-row">
-          <Text className="mr-2">Search</Text>
-          <Feather name="search" size={20} color="black" />
+      <View>
+        <View>
+          <View className="items-center">
+            <Text className="text-2xl font-semibold uppercase">
+              Full Member List Including In-Active Members
+            </Text>
+            <Text className="p-4">
+              This is a list of all members including those who have retired or otherwise been
+              listed as inactive for Union Purposes since January when the new Rosters came out.
+              Ordered by Prior Senoirity System and Prior System Rank, WC -&gt; DMIR -&gt; DWP -&gt;
+              SYS1 -&gt; EJ&E -&gt; SYS2 .
+            </Text>
+          </View>
+          <View className="flex-row justify-between">
+            <Pressable className="m-2 flex-row pl-2">
+              <Text className="mr-2">Search</Text>
+              <Feather name="search" size={20} color="black" />
+            </Pressable>
+            <Pressable onPress={fetchWCMembers} className=" m-2 flex-row pr-2">
+              <Text>Recalculate Roster </Text>
+              <Feather name="check-circle" size={20} color="black" />
+            </Pressable>
+          </View>
         </View>
       </View>
       <FlatList

@@ -96,7 +96,7 @@ export default function Home() {
             <Text className="text-2xl font-semibold uppercase">DWP Roster</Text>
           </View>
           <View className="flex-row justify-between">
-            <Pressable className="m-2 mr-auto flex-row pl-2">
+            <Pressable className="m-2 flex-row pl-2">
               <Text className="mr-2">Search</Text>
               <Feather name="search" size={20} color="black" />
             </Pressable>

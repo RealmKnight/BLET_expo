@@ -96,7 +96,7 @@ export default function Home() {
             <Text className="text-2xl font-semibold uppercase">DMIR Roster</Text>
           </View>
           <View className="flex-row justify-between">
-            <Pressable className="m-2 mr-auto flex-row">
+            <Pressable className="m-2 flex-row">
               <Text className="mr-2 pl-2">Search</Text>
               <Feather name="search" size={20} color="black" />
             </Pressable>

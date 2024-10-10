@@ -74,6 +74,7 @@ export default function MemberListItem({
               <Feather name="share" size={20} color="black" />
             </View>
           </View>
+          {/* Seperate column */}
           <View className="ml-5 flex-col p-5">
             <Text>{dataNotes ? `` : `Notes: ${member.misc_notes}`}</Text>
             <Text>

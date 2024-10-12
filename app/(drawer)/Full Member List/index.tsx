@@ -1,5 +1,5 @@
 import Feather from '@expo/vector-icons/Feather';
-import { Redirect, Stack } from 'expo-router';
+import { Link, Redirect, Stack } from 'expo-router';
 import { View, Text, Pressable } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import MemberListItem from '~/components/MemberListItem';
@@ -79,6 +79,14 @@ export default function Home() {
               <Text className="mr-2">Search</Text>
               <Feather name="search" size={20} color="black" />
             </Pressable>
+            <Pressable onPress={() => {}} className=" m-2 flex-row pr-2">
+              <Text className="mr-2">Filter</Text>
+              <Feather name="filter" size={20} color="black" />
+            </Pressable>
+            <Link href="/newmember" className=" m-2 flex-row pr-2">
+              <Text className="mr-2">Add New Member</Text>
+              <Feather name="user-plus" size={20} color="black" />
+            </Link>
             <Pressable onPress={fetchWCMembers} className=" m-2 flex-row pr-2">
               <Text>Recalculate Roster </Text>
               <Feather name="check-circle" size={20} color="black" />

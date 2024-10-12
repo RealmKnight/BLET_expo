@@ -1,7 +1,5 @@
 import { useLocalSearchParams } from 'expo-router';
-import { StatusBar } from 'expo-status-bar';
 import { Pressable, Text, View } from 'react-native';
-import members from '~/assets/members.json';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Input from '~/components/Input';
 import FontAwesome from '@expo/vector-icons/FontAwesome';

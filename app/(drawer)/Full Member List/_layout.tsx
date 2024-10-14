@@ -22,6 +22,13 @@ export default function TabLayout() {
           tabBarIcon: ({ color }) => <TabBarIcon name="home" color={color} />,
         }}
       />
+      <Tabs.Screen
+        name="newmember"
+        options={{
+          title: 'Add New Member',
+          tabBarIcon: ({ color }) => <TabBarIcon name="user-plus" color={color} />,
+        }}
+      />
     </Tabs>
   );
 }

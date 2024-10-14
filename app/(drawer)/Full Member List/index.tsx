@@ -83,10 +83,6 @@ export default function Home() {
               <Text className="mr-2">Filter</Text>
               <Feather name="filter" size={20} color="black" />
             </Pressable>
-            <Link href="/newmember" className=" m-2 flex-row pr-2">
-              <Text className="mr-2">Add New Member</Text>
-              <Feather name="user-plus" size={20} color="black" />
-            </Link>
             <Pressable onPress={fetchWCMembers} className=" m-2 flex-row pr-2">
               <Text>Recalculate Roster </Text>
               <Feather name="check-circle" size={20} color="black" />

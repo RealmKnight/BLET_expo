@@ -89,7 +89,7 @@ export default function Home() {
 
   return (
     <>
-      <Stack.Screen options={{ title: 'WC Roster' }} />
+      <Stack.Screen options={{ title: 'WC ' }} />
       <View>
         <View>
           <View className="items-center">

@@ -7,13 +7,23 @@ import MemberListItem from '~/components/MemberListItem';
 import { useEffect, useState } from 'react';
 import { supabase } from '~/utils/supabase';
 import { combineWCArrays } from '~/components/RosterFunctions';
+import { useRoster } from '~/contexts/RosterContext';
 
 export default function Home() {
   const [members, setMembers] = useState<any[]>([]);
+  const { shouldUpdateRoster, triggerRosterUpdate } = useRoster();
 
   useEffect(() => {
     fetchWCMembers();
   }, []);
+
+  // This useEffect will run whenever shouldUpdateRoster changes
+  useEffect(() => {
+    if (shouldUpdateRoster) {
+      fetchWCMembers();
+      triggerRosterUpdate();
+    }
+  }, [shouldUpdateRoster]);
 
   const fetchWCMembers = async () => {
     const wcmembers = async () => {
@@ -99,10 +109,6 @@ export default function Home() {
             <Pressable className="m-2 flex-row pl-2">
               <Text className="mr-2">Search</Text>
               <Feather name="search" size={20} color="black" />
-            </Pressable>
-            <Pressable onPress={fetchWCMembers} className=" m-2 flex-row pr-2">
-              <Text>Recalculate Roster </Text>
-              <Feather name="check-circle" size={20} color="black" />
             </Pressable>
           </View>
         </View>

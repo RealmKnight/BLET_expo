@@ -7,6 +7,7 @@ import React, { useEffect, useState } from 'react';
 import { supabase } from '~/utils/supabase';
 import { Picker } from '@react-native-picker/picker';
 import dayjs from 'dayjs';
+import { useRoster } from '~/contexts/RosterContext';
 
 const senTypeOptions = ['WC', 'DMIR', 'DWP', 'SYS1', 'EJ&E', 'SYS2'];
 const divTypeOptions = ['163', '173', '174', '175', '184', '185', '188', '209', '520'];
@@ -33,6 +34,8 @@ export default function AddNewMember() {
   const [dobError, setDobError] = useState<string | null>(null);
   const [hireDateError, setHireDateError] = useState<string | null>(null);
   const [engineerDateError, setEngineerDateError] = useState<string | null>(null);
+
+  const { triggerRosterUpdate } = useRoster();
 
   const initialState = {
     system_sen_type: 'SYS2',
@@ -220,6 +223,7 @@ export default function AddNewMember() {
     ) {
       newMember.misc_notes = null;
     }
+    console.log(newMember);
 
     try {
       const { data, error } = await supabase.from('members').insert([newMember]).select();
@@ -232,6 +236,8 @@ export default function AddNewMember() {
         {
           text: 'OK',
           onPress: () => {
+            // Trigger roster update
+            triggerRosterUpdate();
             // Reset the form to initial state
             setNewMember(initialState);
             // Reset error states

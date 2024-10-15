@@ -69,7 +69,7 @@ export default function Input({
             placeholder={placeHolder ? placeHolder : label ? `Enter ${label}` : ''}
             defaultValue={placeHolder}
             secureTextEntry={secure}
-            id={label}
+            id={label ? label : placeHolder ? placeHolder : 'id'}
             onChangeText={onChangeHandler}
             onEndEditing={validate}
             multiline={numLines > 1}

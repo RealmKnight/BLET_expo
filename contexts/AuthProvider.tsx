@@ -1,3 +1,4 @@
+import React from 'react';
 import { Session } from '@supabase/supabase-js';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { ActivityIndicator } from 'react-native';
@@ -5,7 +6,7 @@ import { supabase } from '~/utils/supabase';
 
 const AuthContext = createContext({});
 
-export default function AuthProvider({ children }) {
+export default function AuthProvider({ children }: { children: React.ReactNode }) {
   const [session, setSession] = useState<Session | null>(null);
   const [isReady, setIsReady] = useState(false);
 

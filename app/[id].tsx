@@ -253,6 +253,7 @@ export default function EditMember() {
             <Text className="mb-2 pr-2">Prior Sen Type :</Text>
             <View className="overflow-hidden rounded-xl border-2 border-gray-400 p-2">
               <Picker
+                id="system_sen_type"
                 selectedValue={member?.system_sen_type}
                 onValueChange={(itemValue) =>
                   setMember((prevMember: typeof member) =>
@@ -289,6 +290,7 @@ export default function EditMember() {
             <Text className="mb-2 pr-2">Zone :</Text>
             <View className="overflow-hidden rounded-xl border-2 border-gray-400 p-2">
               <Picker
+                id="zone"
                 selectedValue={member.zone}
                 onValueChange={(itemValue) =>
                   setMember((prevMember: any) => ({
@@ -306,6 +308,7 @@ export default function EditMember() {
             <Text className="mb-2 pr-2">Division :</Text>
             <View className="overflow-hidden rounded-xl border-2 border-gray-400 p-2">
               <Picker
+                id="division"
                 selectedValue={member.division}
                 onValueChange={(itemValue) =>
                   setMember((prevMember: any) => ({
@@ -323,6 +326,7 @@ export default function EditMember() {
             <Text className="mb-2 pr-2">Status :</Text>
             <View className="overflow-hidden rounded-xl border-2 border-gray-400 p-2">
               <Picker
+                id="status"
                 selectedValue={member.status}
                 onValueChange={(itemValue) =>
                   setMember((prevMember: any) => ({

@@ -3,6 +3,7 @@ import { Link, Redirect, Stack } from 'expo-router';
 import { View, Text, Pressable } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import MemberListItem from '~/components/MemberListItem';
+import { useRoster } from '~/contexts/RosterContext';
 
 import members from '~/assets/members.json';
 import { useAuth } from '~/contexts/AuthProvider';
@@ -11,10 +12,20 @@ import { supabase } from '~/utils/supabase';
 
 export default function Home() {
   const [members, setMembers] = useState<any[]>([]);
+  const { shouldUpdateRoster, triggerRosterUpdate } = useRoster();
 
+  // This useEffect will run on component mount (page load)
   useEffect(() => {
     fetchWCMembers();
   }, []);
+
+  // This useEffect will run whenever shouldUpdateRoster changes
+  useEffect(() => {
+    if (shouldUpdateRoster) {
+      fetchWCMembers();
+      triggerRosterUpdate();
+    }
+  }, [shouldUpdateRoster]);
 
   const fetchWCMembers = async () => {
     const { data, error } = await supabase
@@ -82,10 +93,6 @@ export default function Home() {
             <Pressable onPress={() => {}} className=" m-2 flex-row pr-2">
               <Text className="mr-2">Filter</Text>
               <Feather name="filter" size={20} color="black" />
-            </Pressable>
-            <Pressable onPress={fetchWCMembers} className=" m-2 flex-row pr-2">
-              <Text>Recalculate Roster </Text>
-              <Feather name="check-circle" size={20} color="black" />
             </Pressable>
           </View>
         </View>

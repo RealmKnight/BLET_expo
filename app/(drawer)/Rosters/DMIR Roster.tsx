@@ -7,13 +7,22 @@ import MemberListItem from '~/components/MemberListItem';
 import { useEffect, useState } from 'react';
 import { supabase } from '~/utils/supabase';
 import { combineDMIRArrays } from '~/components/RosterFunctions';
+import { useRoster } from '~/contexts/RosterContext';
 
 export default function Home() {
   const [members, setMembers] = useState<any[]>([]);
-
+  const { shouldUpdateRoster, triggerRosterUpdate } = useRoster();
   useEffect(() => {
     fetchDMIRMembers();
   }, []);
+
+  // This useEffect will run whenever shouldUpdateRoster changes
+  useEffect(() => {
+    if (shouldUpdateRoster) {
+      fetchDMIRMembers();
+      triggerRosterUpdate();
+    }
+  }, [shouldUpdateRoster]);
 
   const fetchDMIRMembers = async () => {
     const wcmembers = async () => {
@@ -99,10 +108,6 @@ export default function Home() {
             <Pressable className="m-2 flex-row">
               <Text className="mr-2 pl-2">Search</Text>
               <Feather name="search" size={20} color="black" />
-            </Pressable>
-            <Pressable onPress={fetchDMIRMembers} className=" m-2 flex-row pr-2">
-              <Text>Recalculate Roster </Text>
-              <Feather name="check-circle" size={20} color="black" />
             </Pressable>
           </View>
         </View>

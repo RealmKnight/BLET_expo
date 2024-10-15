@@ -8,6 +8,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '~/utils/supabase';
 import { combineWCArrays } from '~/components/RosterFunctions';
 import { useRoster } from '~/contexts/RosterContext';
+import useRealtimeSubscription from '~/hooks/useRealtimeSubscription';
 
 export default function Home() {
   const [members, setMembers] = useState<any[]>([]);
@@ -24,6 +25,8 @@ export default function Home() {
       triggerRosterUpdate();
     }
   }, [shouldUpdateRoster]);
+
+  useRealtimeSubscription();
 
   const fetchWCMembers = async () => {
     const wcmembers = async () => {

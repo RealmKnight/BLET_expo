@@ -1,3 +1,4 @@
+import React, { memo } from 'react';
 import Feather from '@expo/vector-icons/Feather';
 import { View, Text } from 'react-native';
 import dayjs from 'dayjs';
@@ -15,9 +16,10 @@ export interface Member {
   division: string;
   status: string;
   misc_notes: string;
+  date_of_birth: string;
 }
 
-export default function MemberListItem({
+const MemberListItem = memo(function MemberListItem({
   member,
   index,
   fullRoster,
@@ -60,9 +62,16 @@ export default function MemberListItem({
                 {dayjs(member.company_hire_date).format('MM/DD/YYYY')}
               </Text>
             </View>
-            <View className="flex-row place-items-center ">
-              <Text className="mr-auto text-lg text-amber-700">{member.zone} </Text>
-              <Text className="pl-1 text-yellow-600">Div {member.division}</Text>
+            <View className="flex-row justify-between ">
+              <Text className=" text-amber-700">{member.zone} </Text>
+              {member.date_of_birth && dayjs(member.date_of_birth).isValid() && (
+                <Text className="text-sm text-blue-400">
+                  {dayjs(member.date_of_birth).format('MM/DD/YYYY')}
+                </Text>
+              )}
+              {member.division && (
+                <Text className="pl-1 text-yellow-600">Div {member.division}</Text>
+              )}
             </View>
           </View>
           {/* Seperate column */}
@@ -89,4 +98,6 @@ export default function MemberListItem({
       </View>
     </>
   );
-}
+});
+
+export default MemberListItem;

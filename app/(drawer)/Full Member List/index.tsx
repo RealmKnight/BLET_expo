@@ -9,11 +9,12 @@ import members from '~/assets/members.json';
 import { useAuth } from '~/contexts/AuthProvider';
 import { useEffect, useState } from 'react';
 import { supabase } from '~/utils/supabase';
+import useRealtimeSubscription from '~/hooks/useRealtimeSubscription';
 
 export default function Home() {
   const [members, setMembers] = useState<any[]>([]);
   const { shouldUpdateRoster, triggerRosterUpdate } = useRoster();
-
+  useRealtimeSubscription();
   // This useEffect will run on component mount (page load)
   useEffect(() => {
     fetchWCMembers();

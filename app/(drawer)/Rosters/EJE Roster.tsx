@@ -8,11 +8,12 @@ import { useEffect, useState } from 'react';
 import { supabase } from '~/utils/supabase';
 import { combineEJEArrays } from '~/components/RosterFunctions';
 import { useRoster } from '~/contexts/RosterContext';
+import useRealtimeSubscription from '~/hooks/useRealtimeSubscription';
 
 export default function Home() {
   const [members, setMembers] = useState<any[]>([]);
   const { shouldUpdateRoster, triggerRosterUpdate } = useRoster();
-
+  useRealtimeSubscription();
   useEffect(() => {
     fetchEJEMembers();
   }, []);

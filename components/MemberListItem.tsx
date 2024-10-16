@@ -38,7 +38,7 @@ const MemberListItem = memo(function MemberListItem({
   }
   return (
     <>
-      <View className="m-3 place-items-center border-b-4 border-gray-300 pb-3">
+      <View className="m-3 place-items-center border-b-4 border-gray-300 bg-white pb-3">
         <View className="flex-row items-center justify-items-start">
           <View className="pb-3 pr-4">
             <Text className="font-bold text-pink-500">Rank {index}</Text>

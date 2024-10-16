@@ -8,6 +8,8 @@ import { supabase } from '~/utils/supabase';
 import { Picker } from '@react-native-picker/picker';
 import dayjs from 'dayjs';
 import { useRoster } from '~/contexts/RosterContext';
+import { showAlert } from '~/utils/alert';
+import CustomPicker from '~/components/CustomPicker';
 
 const senTypeOptions = ['WC', 'DMIR', 'DWP', 'SYS1', 'EJ&E', 'SYS2'];
 const divTypeOptions = ['163', '173', '174', '175', '184', '185', '188', '209', '520'];
@@ -29,7 +31,11 @@ const zoneOptions = [
 ];
 
 export default function AddNewMember() {
-  const [newMember, setNewMember] = useState<any>({ system_sen_type: 'SYS2' });
+  const [newMember, setNewMember] = useState<any>({
+    system_sen_type: 'SYS2',
+    pin_number: null,
+    prior_vac_sys: null,
+  });
   const [pinError, setPinError] = useState<string | null>(null);
   const [dobError, setDobError] = useState<string | null>(null);
   const [hireDateError, setHireDateError] = useState<string | null>(null);
@@ -140,9 +146,9 @@ export default function AddNewMember() {
     return true;
   };
 
-  const validatePin = async (pin: string) => {
-    if (pin.length !== 6 || !/^\d+$/.test(pin)) {
-      setPinError('PIN must be 6 digits long');
+  const validatePin = async (pin: number) => {
+    if (isNaN(pin) || pin < 100000 || pin > 999999) {
+      setPinError('PIN must be a 6-digit number');
       return false;
     }
 
@@ -167,12 +173,12 @@ export default function AddNewMember() {
 
   const addNewMemberToDatabase = async () => {
     if (!newMember.pin_number || !(await validatePin(newMember.pin_number))) {
-      Alert.alert('Error', 'Please enter a valid PIN');
+      showAlert('Error', 'Please enter a valid PIN');
       return;
     }
 
     if (!newMember.system_sen_type) {
-      Alert.alert('Error', 'Please select a Prior Sen Type');
+      showAlert('Error', 'Please select a Prior Sen Type');
       return;
     }
 
@@ -182,7 +188,7 @@ export default function AddNewMember() {
       newMember.first_name === null ||
       newMember.first_name === 'Enter First Name :'
     ) {
-      Alert.alert('Error', 'Please enter a First Name');
+      showAlert('Error', 'Please enter a First Name');
       return;
     }
 
@@ -192,27 +198,27 @@ export default function AddNewMember() {
       newMember.last_name === null ||
       newMember.last_name === 'Enter Last Name :'
     ) {
-      Alert.alert('Error', 'Please enter a Last Name');
+      showAlert('Error', 'Please enter a Last Name');
       return;
     }
 
     if (!newMember.date_of_birth || newMember.date_of_birth === 'MM/DD/YYYY') {
-      Alert.alert('Error', 'Please enter a Date of Birth');
+      showAlert('Error', 'Please enter a Date of Birth');
       return;
     }
 
     if (!newMember.company_hire_date || newMember.company_hire_date === 'MM/DD/YYYY') {
-      Alert.alert('Error', 'Please enter a Hire Date');
+      showAlert('Error', 'Please enter a Hire Date');
       return;
     }
 
     if (!newMember.engineer_date || newMember.engineer_date === 'MM/DD/YYYY') {
-      Alert.alert('Error', 'Please enter a Engineer Date');
+      showAlert('Error', 'Please enter a Engineer Date');
       return;
     }
 
     if (!newMember.pin_number) {
-      Alert.alert('Error', 'Please enter a Pin Number');
+      showAlert('Error', 'Please enter a Pin Number');
       return;
     }
 
@@ -232,34 +238,19 @@ export default function AddNewMember() {
         throw error;
       }
 
-      Alert.alert('Success', 'New member added successfully!', [
-        {
-          text: 'OK',
-          onPress: () => {
-            // Trigger roster update
-            triggerRosterUpdate();
-            // Reset the form to initial state
-            setNewMember(initialState);
-            // Reset error states
-            setPinError(null);
-            setDobError(null);
-            setHireDateError(null);
-            setEngineerDateError(null);
-            // Add any other error state resets here
-          },
-        },
-      ]);
+      showAlert('Success', 'New member added successfully!');
+      // Reset form and trigger updates here
     } catch (error) {
       console.error('Error adding new member:', error);
-      Alert.alert('Error', 'Failed to add new member. Please try again.');
+      showAlert('Error', 'Failed to add new member. Please try again.');
     }
   };
 
   return (
     <>
       <View className="flex-1 place-items-center pt-5">
-        <KeyboardAwareScrollView className="justify-items-center">
-          <Text className="text-2xl font-bold">Add New Member</Text>
+        <KeyboardAwareScrollView className="justify-items-center pl-3 pr-3">
+          <Text className="pl-2 text-2xl font-bold">Add New Member</Text>
           <Input
             label="First Name : "
             secure={false}
@@ -278,8 +269,11 @@ export default function AddNewMember() {
             label="PIN : "
             secure={false}
             onChangeHandler={async (text) => {
-              setNewMember({ ...newMember, pin_number: text });
-              await validatePin(text);
+              const numericValue = parseInt(text, 10);
+              setNewMember({ ...newMember, pin_number: isNaN(numericValue) ? null : numericValue });
+              if (!isNaN(numericValue)) {
+                await validatePin(numericValue);
+              }
             }}
           />
           {pinError && <Text className="text-red-500">{pinError}</Text>}
@@ -293,24 +287,24 @@ export default function AddNewMember() {
             }}
           />
           {dobError && <Text className="text-red-500">{dobError}</Text>}
-          <View className="mb-4 flex-row items-baseline justify-between">
-            <Text className="mb-2 pr-2">Prior Sen Type :</Text>
-            <View className="overflow-hidden rounded-xl border-2 border-gray-400 p-2">
-              <Picker
-                selectedValue={newMember.system_sen_type}
-                onValueChange={(itemValue) =>
-                  setNewMember({ ...newMember, system_sen_type: itemValue })
-                }>
-                {senTypeOptions.map((option) => (
-                  <Picker.Item key={option} label={option} value={option} />
-                ))}
-              </Picker>
-            </View>
-          </View>
+          <CustomPicker
+            label="Prior Sen Type :"
+            selectedValue={newMember.system_sen_type}
+            onValueChange={(itemValue) =>
+              setNewMember({ ...newMember, system_sen_type: itemValue })
+            }
+            options={senTypeOptions}
+          />
           <Input
             label="Sen Ranking :"
             secure={false}
-            onChangeHandler={(text) => setNewMember({ ...newMember, prior_vac_sys: text })}
+            onChangeHandler={(text) => {
+              const numericValue = parseInt(text, 10);
+              setNewMember({
+                ...newMember,
+                prior_vac_sys: isNaN(numericValue) ? null : numericValue,
+              });
+            }}
           />
           <Input
             label="Hire Date : "
@@ -332,42 +326,24 @@ export default function AddNewMember() {
             }}
           />
           {engineerDateError && <Text className="text-red-500">{engineerDateError}</Text>}
-          <View className="mb-4 flex-row items-baseline justify-between">
-            <Text className="mb-2 pr-2">Zone :</Text>
-            <View className="overflow-hidden rounded-xl border-2 border-gray-400 p-2">
-              <Picker
-                selectedValue={newMember.zone}
-                onValueChange={(itemValue) => setNewMember({ ...newMember, zone: itemValue })}>
-                {zoneOptions.map((option) => (
-                  <Picker.Item key={option} label={option} value={option} />
-                ))}
-              </Picker>
-            </View>
-          </View>
-          <View className="mb-4 flex-row items-baseline justify-between">
-            <Text className="mb-2 pr-2">Division :</Text>
-            <View className="overflow-hidden rounded-xl border-2 border-gray-400 p-2">
-              <Picker
-                selectedValue={newMember.division}
-                onValueChange={(itemValue) => setNewMember({ ...newMember, division: itemValue })}>
-                {divTypeOptions.map((option) => (
-                  <Picker.Item key={option} label={option} value={option} />
-                ))}
-              </Picker>
-            </View>
-          </View>
-          <View className="mb-4 flex-row items-baseline justify-between">
-            <Text className="mb-2 pr-2">Status :</Text>
-            <View className="overflow-hidden rounded-xl border-2 border-gray-400 p-2">
-              <Picker
-                selectedValue={newMember.status}
-                onValueChange={(itemValue) => setNewMember({ ...newMember, status: itemValue })}>
-                {statusOptions.map((option) => (
-                  <Picker.Item key={option} label={option} value={option} />
-                ))}
-              </Picker>
-            </View>
-          </View>
+          <CustomPicker
+            label="Zone :"
+            selectedValue={newMember.zone}
+            onValueChange={(itemValue) => setNewMember({ ...newMember, zone: itemValue })}
+            options={zoneOptions}
+          />
+          <CustomPicker
+            label="Division :"
+            selectedValue={newMember.division}
+            onValueChange={(itemValue) => setNewMember({ ...newMember, division: itemValue })}
+            options={divTypeOptions}
+          />
+          <CustomPicker
+            label="Status :"
+            selectedValue={newMember.status}
+            onValueChange={(itemValue) => setNewMember({ ...newMember, status: itemValue })}
+            options={statusOptions}
+          />
           <Input
             label="Misc Notes: "
             numLines={3}

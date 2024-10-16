@@ -1,8 +1,9 @@
 import Feather from '@expo/vector-icons/Feather';
 import { Stack } from 'expo-router';
 import { View, Text, Pressable } from 'react-native';
-import { FlatList } from 'react-native-gesture-handler';
-import MemberListItem from '~/components/MemberListItem';
+import MemberListItem, { Member } from '~/components/MemberListItem';
+import React, { useCallback } from 'react';
+import { FlashList } from '@shopify/flash-list';
 
 import { useEffect, useState } from 'react';
 import { supabase } from '~/utils/supabase';
@@ -12,23 +13,11 @@ import useRealtimeSubscription from '~/hooks/useRealtimeSubscription';
 
 export default function Home() {
   const [members, setMembers] = useState<any[]>([]);
-  const { shouldUpdateRoster, triggerRosterUpdate } = useRoster();
-
-  useEffect(() => {
-    fetchWCMembers();
-  }, []);
-
-  // This useEffect will run whenever shouldUpdateRoster changes
-  useEffect(() => {
-    if (shouldUpdateRoster) {
-      fetchWCMembers();
-      triggerRosterUpdate();
-    }
-  }, [shouldUpdateRoster]);
+  const { shouldUpdateRoster } = useRoster();
 
   useRealtimeSubscription();
 
-  const fetchWCMembers = async () => {
+  const fetchWCMembers = useCallback(async () => {
     const wcmembers = async () => {
       const { data, error } = await supabase
         .from('members')
@@ -98,7 +87,20 @@ export default function Home() {
       await sys2members()
     );
     setMembers(combinedData);
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchWCMembers();
+  }, [fetchWCMembers, shouldUpdateRoster]);
+
+  const renderItem = useCallback(
+    ({ item, index }: { item: Member; index: number }) => (
+      <MemberListItem member={item} index={index + 1} fullRoster={false} />
+    ),
+    []
+  );
+
+  const keyExtractor = useCallback((item: Member) => item.pin_number.toString(), []);
 
   return (
     <>
@@ -116,13 +118,15 @@ export default function Home() {
           </View>
         </View>
       </View>
-      <FlatList
-        data={members}
-        renderItem={({ item, index }) => (
-          <MemberListItem member={item} index={index + 1} fullRoster={false} />
-        )}
-        className="bg-gray-200"
-      />
+      <View className="flex-1 bg-gray-200">
+        <FlashList
+          data={members}
+          renderItem={renderItem}
+          estimatedItemSize={600}
+          keyExtractor={keyExtractor}
+          contentContainerStyle={{ backgroundColor: 'rgb(229, 231, 235)' }} // This is equivalent to bg-gray-200
+        />
+      </View>
     </>
   );
 }

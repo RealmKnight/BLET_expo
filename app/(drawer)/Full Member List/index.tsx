@@ -1,34 +1,22 @@
 import Feather from '@expo/vector-icons/Feather';
-import { Link, Redirect, Stack } from 'expo-router';
+import { Stack } from 'expo-router';
 import { View, Text, Pressable } from 'react-native';
-import { FlatList } from 'react-native-gesture-handler';
-import MemberListItem from '~/components/MemberListItem';
-import { useRoster } from '~/contexts/RosterContext';
+import MemberListItem, { Member } from '~/components/MemberListItem';
+import React, { useCallback } from 'react';
+import { FlashList } from '@shopify/flash-list';
 
-import members from '~/assets/members.json';
-import { useAuth } from '~/contexts/AuthProvider';
 import { useEffect, useState } from 'react';
 import { supabase } from '~/utils/supabase';
+import { useRoster } from '~/contexts/RosterContext';
 import useRealtimeSubscription from '~/hooks/useRealtimeSubscription';
 
 export default function Home() {
   const [members, setMembers] = useState<any[]>([]);
-  const { shouldUpdateRoster, triggerRosterUpdate } = useRoster();
+  const { shouldUpdateRoster } = useRoster();
+
   useRealtimeSubscription();
-  // This useEffect will run on component mount (page load)
-  useEffect(() => {
-    fetchWCMembers();
-  }, []);
 
-  // This useEffect will run whenever shouldUpdateRoster changes
-  useEffect(() => {
-    if (shouldUpdateRoster) {
-      fetchWCMembers();
-      triggerRosterUpdate();
-    }
-  }, [shouldUpdateRoster]);
-
-  const fetchWCMembers = async () => {
+  const fetchALLMembers = async () => {
     const { data, error } = await supabase
       .from('members')
       .select('*')
@@ -70,6 +58,20 @@ export default function Home() {
     setMembers(combinedData);
   };
 
+  // This useEffect will run on component mount (page load)
+  useEffect(() => {
+    fetchALLMembers();
+  }, [fetchALLMembers, shouldUpdateRoster]);
+
+  const renderItem = useCallback(
+    ({ item, index }: { item: Member; index: number }) => (
+      <MemberListItem member={item} index={index + 1} fullRoster={true} />
+    ),
+    []
+  );
+
+  const keyExtractor = useCallback((item: Member) => item.pin_number.toString(), []);
+
   return (
     <>
       <Stack.Screen options={{ title: 'Full Member List' }} />
@@ -98,13 +100,15 @@ export default function Home() {
           </View>
         </View>
       </View>
-      <FlatList
-        data={members}
-        renderItem={({ item, index }) => (
-          <MemberListItem member={item} index={index + 1} fullRoster={true} />
-        )}
-        className="bg-gray-200"
-      />
+      <View className="flex-1 bg-gray-200">
+        <FlashList
+          data={members}
+          renderItem={renderItem}
+          estimatedItemSize={800}
+          keyExtractor={keyExtractor}
+          contentContainerStyle={{ backgroundColor: 'rgb(229, 231, 235)' }} // This is equivalent to bg-gray-200
+        />
+      </View>
     </>
   );
 }

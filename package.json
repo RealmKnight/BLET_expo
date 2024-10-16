@@ -19,6 +19,7 @@
     "@react-navigation/drawer": "^6.6.15",
     "@react-navigation/native": "^6.1.7",
     "@rneui/themed": "^4.0.0-rc.8",
+    "@shopify/flash-list": "^1.7.1",
     "@supabase/supabase-js": "^2.45.4",
     "dayjs": "^1.11.13",
     "expo": "^51.0.37",

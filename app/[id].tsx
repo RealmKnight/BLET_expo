@@ -1,4 +1,4 @@
-import { useLocalSearchParams } from 'expo-router';
+import { router, useLocalSearchParams } from 'expo-router';
 import { Alert, Pressable, Text, View } from 'react-native';
 import { KeyboardAwareScrollView } from 'react-native-keyboard-aware-scroll-view';
 import Input from '~/components/Input';
@@ -7,6 +7,10 @@ import { useEffect, useState } from 'react';
 import { supabase } from '~/utils/supabase';
 import dayjs from 'dayjs';
 import { Picker } from '@react-native-picker/picker';
+import { showAlert } from '~/utils/alert';
+import { useRouter } from 'expo-router';
+import { useRoster } from '~/contexts/RosterContext';
+import CustomPicker from '~/components/CustomPicker';
 
 const senTypeOptions = ['WC', 'DMIR', 'DWP', 'SYS1', 'EJ&E', 'SYS2'];
 const divTypeOptions = ['163', '173', '174', '175', '184', '185', '188', '209', '520'];
@@ -36,6 +40,9 @@ export default function EditMember() {
   const [hireDateError, setHireDateError] = useState<string | null>(null);
   const [engineerDateError, setEngineerDateError] = useState<string | null>(null);
 
+  const router = useRouter();
+  const { triggerRosterUpdate } = useRoster();
+
   useEffect(() => {
     fetchMembers();
   }, []);
@@ -43,7 +50,7 @@ export default function EditMember() {
   const fetchMembers = async () => {
     const { data, error } = await supabase.from('members').select('*').order('wc_sen_roster');
     if (data) {
-      const foundMember = data.find((m) => m.pin_number.toString() === id);
+      const foundMember = data.find((m) => m.pin_number === parseInt(id as string, 10));
       if (foundMember) {
         setMember(foundMember);
       }
@@ -213,6 +220,12 @@ export default function EditMember() {
 
       Alert.alert('Success', 'Member Updated successfully!');
       console.log('success');
+
+      // Trigger roster update
+      triggerRosterUpdate();
+
+      // Redirect back to the previous page
+      router.back();
     } catch (error) {
       console.error('Error updating member:', error);
       Alert.alert('Error', 'Failed to update member. Please try again.');
@@ -222,7 +235,7 @@ export default function EditMember() {
   return (
     <>
       <View className="flex-1 place-items-center pt-5">
-        <KeyboardAwareScrollView className="justify-items-center">
+        <KeyboardAwareScrollView className="justify-items-center pl-3 pr-3">
           <Text className="pb-4 font-bold">
             Member: {member.first_name} {member.last_name} {member.pin_number}
           </Text>
@@ -238,7 +251,12 @@ export default function EditMember() {
             secure={false}
             onChangeHandler={(text) => setMember({ ...member, last_name: text.toUpperCase() })}
           />
-          <Input label="PIN : " placeHolder={member.pin_number} secure={false} disabled={true} />
+          <Input
+            label="PIN : "
+            placeHolder={member?.pin_number?.toString()}
+            secure={false}
+            disabled={true}
+          />
           <Input
             label="DOB :"
             placeHolder={dayjs(member.date_of_birth).format('MM/DD/YYYY')}
@@ -249,23 +267,12 @@ export default function EditMember() {
             }}
           />
           {dobError && <Text className="text-red-500">{dobError}</Text>}
-          <View className="mb-2 flex-row items-baseline justify-between pr-2">
-            <Text className="mb-2 pr-2">Prior Sen Type :</Text>
-            <View className="overflow-hidden rounded-xl border-2 border-gray-400 p-2">
-              <Picker
-                id="system_sen_type"
-                selectedValue={member?.system_sen_type}
-                onValueChange={(itemValue) =>
-                  setMember((prevMember: typeof member) =>
-                    prevMember ? { ...prevMember, system_sen_type: itemValue } : null
-                  )
-                }>
-                {senTypeOptions.map((option) => (
-                  <Picker.Item key={option} label={option} value={option} />
-                ))}
-              </Picker>
-            </View>
-          </View>
+          <CustomPicker
+            label="Prior Sen Type :"
+            selectedValue={member.system_sen_type}
+            onValueChange={(itemValue) => setMember({ ...member, system_sen_type: itemValue })}
+            options={senTypeOptions}
+          />
           <Input
             label="Hire Date : "
             placeHolder={dayjs(member.company_hire_date).format('MM/DD/YYYY')}
@@ -286,66 +293,39 @@ export default function EditMember() {
             }}
           />
           {engineerDateError && <Text className="text-red-500">{engineerDateError}</Text>}
-          <View className="mb-4 mt-2 flex-row items-baseline justify-between pr-2">
-            <Text className="mb-2 pr-2">Zone :</Text>
-            <View className="overflow-hidden rounded-xl border-2 border-gray-400 p-2">
-              <Picker
-                id="zone"
-                selectedValue={member.zone}
-                onValueChange={(itemValue) =>
-                  setMember((prevMember: any) => ({
-                    ...prevMember,
-                    zone: itemValue,
-                  }))
-                }>
-                {zoneOptions.map((option) => (
-                  <Picker.Item key={option} label={option} value={option} />
-                ))}
-              </Picker>
-            </View>
-          </View>
-          <View className="mb-4 flex-row items-baseline justify-between pr-2">
-            <Text className="mb-2 pr-2">Division :</Text>
-            <View className="overflow-hidden rounded-xl border-2 border-gray-400 p-2">
-              <Picker
-                id="division"
-                selectedValue={member.division}
-                onValueChange={(itemValue) =>
-                  setMember((prevMember: any) => ({
-                    ...prevMember,
-                    division: itemValue,
-                  }))
-                }>
-                {divTypeOptions.map((option) => (
-                  <Picker.Item key={option} label={option} value={option} />
-                ))}
-              </Picker>
-            </View>
-          </View>
-          <View className="mb-4 flex-row items-baseline justify-between pr-2">
-            <Text className="mb-2 pr-2">Status :</Text>
-            <View className="overflow-hidden rounded-xl border-2 border-gray-400 p-2">
-              <Picker
-                id="status"
-                selectedValue={member.status}
-                onValueChange={(itemValue) =>
-                  setMember((prevMember: any) => ({
-                    ...prevMember,
-                    status: itemValue,
-                  }))
-                }>
-                {statusOptions.map((option) => (
-                  <Picker.Item key={option} label={option} value={option} />
-                ))}
-              </Picker>
-            </View>
-          </View>
+          <CustomPicker
+            label="Zone :"
+            selectedValue={member.zone}
+            onValueChange={(itemValue) => setMember({ ...member, zone: itemValue })}
+            options={zoneOptions}
+          />
+          <CustomPicker
+            label="Division :"
+            selectedValue={member.division}
+            onValueChange={(itemValue) => setMember({ ...member, division: itemValue })}
+            options={divTypeOptions}
+          />
+          <CustomPicker
+            label="Status :"
+            selectedValue={member.status}
+            onValueChange={(itemValue) => setMember({ ...member, status: itemValue })}
+            options={statusOptions}
+          />
           <Input
             label="Misc Notes: "
             placeHolder={member.misc_notes || ''}
             numLines={3}
             secure={false}
             onChangeHandler={(text) => setMember({ ...member, misc_notes: text.toUpperCase() })}
+          />
+          <Input
+            label="Sen Ranking :"
+            placeHolder={member?.prior_vac_sys?.toString()}
+            secure={false}
+            onChangeHandler={(text) => {
+              const numericValue = parseInt(text, 10);
+              setMember({ ...member, prior_vac_sys: isNaN(numericValue) ? null : numericValue });
+            }}
           />
         </KeyboardAwareScrollView>
       </View>

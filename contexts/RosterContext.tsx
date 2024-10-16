@@ -1,15 +1,17 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useContext, useState } from 'react';
 
-const RosterContext = createContext({
-  shouldUpdateRoster: false,
-  triggerRosterUpdate: () => {},
-});
+interface RosterContextType {
+  shouldUpdateRoster: boolean;
+  triggerRosterUpdate: () => void;
+}
 
-export const RosterProvider = ({ children }: { children: React.ReactNode }) => {
+const RosterContext = createContext<RosterContextType | undefined>(undefined);
+
+export function RosterProvider({ children }: { children: React.ReactNode }) {
   const [shouldUpdateRoster, setShouldUpdateRoster] = useState(false);
 
   const triggerRosterUpdate = () => {
-    setShouldUpdateRoster(true);
+    setShouldUpdateRoster((prev) => !prev);
   };
 
   return (
@@ -17,6 +19,12 @@ export const RosterProvider = ({ children }: { children: React.ReactNode }) => {
       {children}
     </RosterContext.Provider>
   );
-};
+}
 
-export const useRoster = () => useContext(RosterContext);
+export function useRoster() {
+  const context = useContext(RosterContext);
+  if (context === undefined) {
+    throw new Error('useRoster must be used within a RosterProvider');
+  }
+  return context;
+}

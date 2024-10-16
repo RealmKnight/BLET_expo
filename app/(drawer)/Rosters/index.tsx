@@ -1,97 +1,74 @@
+import { observer } from '@legendapp/state/react';
+import { members$, setupRealtimeSubscription, fetchInitialMembers } from '~/utils/SupaLegend';
 import Feather from '@expo/vector-icons/Feather';
 import { Stack } from 'expo-router';
-import { View, Text, Pressable } from 'react-native';
+import { View, Text, Pressable, Dimensions } from 'react-native';
 import MemberListItem, { Member } from '~/components/MemberListItem';
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect, useState, useMemo } from 'react';
 import { FlashList } from '@shopify/flash-list';
-
-import { useEffect, useState } from 'react';
-import { supabase } from '~/utils/supabase';
 import { combineWCArrays } from '~/components/RosterFunctions';
-import { useRoster } from '~/contexts/RosterContext';
-import useRealtimeSubscription from '~/hooks/useRealtimeSubscription';
 
-export default function Home() {
-  const [members, setMembers] = useState<any[]>([]);
-  const { shouldUpdateRoster } = useRoster();
-
-  useRealtimeSubscription();
-
-  const fetchWCMembers = useCallback(async () => {
-    const wcmembers = async () => {
-      const { data, error } = await supabase
-        .from('members')
-        .select('*')
-        .eq('status', 'ACTIVE')
-        .eq('system_sen_type', 'WC')
-        .order('prior_vac_sys');
-      return data || [];
-    };
-
-    const dmirmembers = async () => {
-      const { data, error } = await supabase
-        .from('members')
-        .select('*')
-        .eq('status', 'ACTIVE')
-        .eq('system_sen_type', 'DMIR')
-        .order('prior_vac_sys');
-      return data || [];
-    };
-
-    const dwpmembers = async () => {
-      const { data, error } = await supabase
-        .from('members')
-        .select('*')
-        .eq('status', 'ACTIVE')
-        .eq('system_sen_type', 'DWP')
-        .order('prior_vac_sys');
-      return data || [];
-    };
-
-    const sys1members = async () => {
-      const { data, error } = await supabase
-        .from('members')
-        .select('*')
-        .eq('status', 'ACTIVE')
-        .eq('system_sen_type', 'SYS1')
-        .order('prior_vac_sys');
-      return data || [];
-    };
-
-    const ejemembers = async () => {
-      const { data, error } = await supabase
-        .from('members')
-        .select('*')
-        .eq('status', 'ACTIVE')
-        .eq('system_sen_type', 'EJ&E')
-        .order('prior_vac_sys');
-      return data || [];
-    };
-
-    const sys2members = async () => {
-      const { data, error } = await supabase
-        .from('members')
-        .select('*')
-        .eq('status', 'ACTIVE')
-        .eq('system_sen_type', 'SYS2')
-        .order('prior_vac_sys');
-      return data || [];
-    };
-
-    const combinedData = combineWCArrays(
-      await wcmembers(),
-      await dmirmembers(),
-      await dwpmembers(),
-      await sys1members(),
-      await ejemembers(),
-      await sys2members()
-    );
-    setMembers(combinedData);
-  }, []);
+const Home = observer(() => {
+  const [isLoading, setIsLoading] = useState(true);
+  const members = members$.get();
 
   useEffect(() => {
-    fetchWCMembers();
-  }, [fetchWCMembers, shouldUpdateRoster]);
+    console.log('Home component mounted');
+    const fetchData = async () => {
+      setIsLoading(true);
+      await fetchInitialMembers();
+      setIsLoading(false);
+    };
+    fetchData();
+    const unsubscribe = setupRealtimeSubscription();
+
+    return () => {
+      console.log('Home component unmounting');
+      unsubscribe();
+    };
+  }, []);
+
+  const sortedMembers = useMemo(() => {
+    const membersArray = Object.values(members).filter((m) => m.status === 'ACTIVE');
+    const sortByPriorVacSys = (a: Member, b: Member) => {
+      if (a.prior_vac_sys === null || b.prior_vac_sys === null) {
+        return 0; // Handle null values
+      }
+      if (typeof a.prior_vac_sys === 'number' && typeof b.prior_vac_sys === 'number') {
+        return a.prior_vac_sys - b.prior_vac_sys; // Compare numbers
+      }
+      return String(a.prior_vac_sys).localeCompare(String(b.prior_vac_sys)); // Compare as strings
+    };
+
+    const wcmembers = membersArray
+      .filter((m) => m.system_sen_type === 'WC')
+      .sort(sortByPriorVacSys);
+    const dmirmembers = membersArray
+      .filter((m) => m.system_sen_type === 'DMIR')
+      .sort(sortByPriorVacSys);
+    const dwpmembers = membersArray
+      .filter((m) => m.system_sen_type === 'DWP')
+      .sort(sortByPriorVacSys);
+    const sys1members = membersArray
+      .filter((m) => m.system_sen_type === 'SYS1')
+      .sort(sortByPriorVacSys);
+    const ejemembers = membersArray
+      .filter((m) => m.system_sen_type === 'EJ&E')
+      .sort(sortByPriorVacSys);
+    const sys2members = membersArray
+      .filter((m) => m.system_sen_type === 'SYS2')
+      .sort(sortByPriorVacSys);
+
+    const sortedArray = combineWCArrays(
+      wcmembers,
+      dmirmembers,
+      dwpmembers,
+      sys1members,
+      ejemembers,
+      sys2members
+    );
+    return sortedArray;
+  }, [members]);
 
   const renderItem = useCallback(
     ({ item, index }: { item: Member; index: number }) => (
@@ -100,33 +77,37 @@ export default function Home() {
     []
   );
 
-  const keyExtractor = useCallback((item: Member) => item.pin_number.toString(), []);
+  const keyExtractor = useCallback((item: Member) => {
+    if (item && item.id) {
+      return item.id.toString();
+    }
+    return `member-${item?.pin_number || Math.random()}`;
+  }, []);
 
   return (
     <>
       <Stack.Screen options={{ title: 'WC ' }} />
-      <View>
-        <View>
-          <View className="items-center">
-            <Text className="text-2xl font-semibold uppercase">WC Roster</Text>
-          </View>
-          <View className="flex-row justify-between">
-            <Pressable className="m-2 flex-row pl-2">
-              <Text className="mr-2">Search</Text>
-              <Feather name="search" size={20} color="black" />
-            </Pressable>
-          </View>
-        </View>
-      </View>
-      <View className="flex-1 bg-gray-200">
-        <FlashList
-          data={members}
-          renderItem={renderItem}
-          estimatedItemSize={600}
-          keyExtractor={keyExtractor}
-          contentContainerStyle={{ backgroundColor: 'rgb(229, 231, 235)' }} // This is equivalent to bg-gray-200
-        />
+      <View
+        style={{
+          flex: 1,
+          height: Dimensions.get('window').height,
+          backgroundColor: 'rgb(229, 231, 235)',
+        }}>
+        {isLoading ? (
+          <Text>Loading members...</Text>
+        ) : sortedMembers.length > 0 ? (
+          <FlashList
+            data={sortedMembers}
+            renderItem={renderItem}
+            estimatedItemSize={100}
+            keyExtractor={keyExtractor}
+          />
+        ) : (
+          <Text>No members available</Text>
+        )}
       </View>
     </>
   );
-}
+});
+
+export default Home;

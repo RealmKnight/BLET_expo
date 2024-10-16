@@ -3,17 +3,19 @@ import Feather from '@expo/vector-icons/Feather';
 import { View, Text } from 'react-native';
 import dayjs from 'dayjs';
 import { Link } from 'expo-router';
+import { Database } from '~/database.types';
 
 export interface Member {
+  id: number;
   first_name: string;
   last_name: string;
   pin_number: number;
-  system_sen_type: string;
-  prior_vac_sys: string;
+  system_sen_type: Database['public']['Enums']['sys_seniority_type'] | null;
+  prior_vac_sys: number | null;
   engineer_date: string;
   company_hire_date: string;
-  zone: string;
-  division: string;
+  zone: Database['public']['Enums']['zone'] | null;
+  division: Database['public']['Enums']['division'] | null;
   status: string;
   misc_notes: string;
   date_of_birth: string;
